@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Karaoke Đồng Bộ - Tiếng Nhật + Dịch + Hiragana</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 30px;
+      background: #f9f9f9;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    audio {
+      margin-bottom: 30px;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .sentence {
+      margin: 20px 0;
+      font-size: 24px;
+      line-height: 2;
+      text-align: center;
+    }
+
+    .word {
+      display: inline-block;
+      margin: 2px;
+      transition: color 0.2s;
+    }
+
+    .highlight {
+      color: red;
+      font-weight: bold;
+    }
+
+    .hiragana {
+      display: block;
+      font-size: 14px;
+      color: gray;
+      margin-top: 2px;
+    }
+
+    .tooltip {
+      display: block;
+      font-size: 16px;
+      color: green;
+      margin-top: 6px;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Hiển Thị Karaoke Đồng Bộ</h2>
+
+<audio id="audio" controls src="audio.wav"></audio>
+
+<div id="lyrics"></div>
+
+<script>
+// Đọc file JSON chứa phụ đề có hiragana và dịch
+fetch('words_with_hiragana.json')
+  .then(res => res.json())
+  .then(segments => {
+    const lyricsDiv = document.getElementById('lyrics');
+
+    segments.forEach(seg => {
+      const p = document.createElement('div');
+      p.className = 'sentence';
+
+      // Hiển thị từng từ với hiragana bên dưới
+      (seg.words || []).forEach(wordData => {
+        const span = document.createElement('span');
+        span.className = 'word';
+        span.textContent = wordData.word;
+        span.dataset.start = wordData.start;
+        span.dataset.end = wordData.end;
+
+        // Thêm hiragana
+        const hiragana = document.createElement('div');
+        hiragana.className = 'hiragana';
+        hiragana.textContent = wordData.hiragana || "";
+        span.appendChild(hiragana);
+
+        p.appendChild(span);
+      });
+
+      // Hiển thị bản dịch của cả câu
+      const tooltip = document.createElement('div');
+      tooltip.className = 'tooltip';
+      tooltip.textContent = seg.translation || "";
+      p.appendChild(tooltip);
+
+      lyricsDiv.appendChild(p);
+    });
+
+    const audio = document.getElementById('audio');
+
+    // Hàm kiểm tra thời gian hiện tại và highlight từ tương ứng
+    audio.addEventListener('timeupdate', () => {
+      const currentTime = audio.currentTime;
+
+      document.querySelectorAll('.word').forEach(span => {
+        const start = parseFloat(span.dataset.start);
+        const end = parseFloat(span.dataset.end);
+
+        if (currentTime >= start && currentTime <= end) {
+          span.classList.add('highlight');
+        } else {
+          span.classList.remove('highlight');
+        }
+      });
+    });
+  })
+  .catch(err => console.error("❌ Không thể tải phụ đề:", err));
+</script>
+
+</body>
+</html>

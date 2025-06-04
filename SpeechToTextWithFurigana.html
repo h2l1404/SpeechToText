@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Karaoke Với Furigana</title>
+  <style>
+    body { font-family: sans-serif; padding: 30px; background: #f0f0f0; text-align: center; }
+    .sentence { margin: 20px 0; font-size: 24px; line-height: 2; }
+    .tooltip {
+      display: block;
+      font-size: 16px;
+      color: green;
+      margin-top: 8px;
+      font-style: italic;
+    }
+    ruby {
+      font-size: 1.2em;
+    }
+    rt {
+      font-size: 0.6em;
+      color: gray;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Hiển Thị Karaoke Có Furigana</h2>
+
+<audio id="audio" controls src="audio.wav"></audio>
+
+<div id="lyrics"></div>
+
+<script>
+// Đọc file words_with_furigana.json
+fetch('words_with_furigana.json')
+  .then(res => res.json())
+  .then(segments => {
+    const lyricsDiv = document.getElementById('lyrics');
+
+    segments.forEach(seg => {
+      const p = document.createElement('div');
+      p.className = 'sentence';
+
+      // Hiển thị furigana
+      p.innerHTML = seg.furigana;
+
+      // Hiển thị bản dịch bên dưới
+      const tooltip = document.createElement('div');
+      tooltip.className = 'tooltip';
+      tooltip.textContent = seg.translation || "";
+      p.appendChild(tooltip);
+
+      lyricsDiv.appendChild(p);
+    });
+
+    const audio = document.getElementById('audio');
+
+    // Hàm kiểm tra thời gian hiện tại và highlight câu tương ứng
+    audio.addEventListener('timeupdate', () => {
+      const currentTime = audio.currentTime;
+
+      Array.from(lyricsDiv.children).forEach((p, index) => {
+        const start = parseFloat(p.parentNode.children[index].dataset?.start || 0);
+        const end = parseFloat(p.parentNode.children[index].dataset?.end || 0);
+
+        if (currentTime >= start && currentTime <= end) {
+          p.style.color = "red";
+          p.style.fontWeight = "bold";
+        } else {
+          p.style.color = "black";
+          p.style.fontWeight = "normal";
+        }
+      });
+    });
+  })
+  .catch(err => console.error("❌ Không thể tải phụ đề:", err));
+</script>
+
+</body>
+</html>
