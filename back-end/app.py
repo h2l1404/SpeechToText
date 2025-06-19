@@ -5,10 +5,13 @@ from tokenize_jp import tokenize_japanese
 from add_hiragana import add_hiragana_to_words
 from translate import translate_ja_to_vi
 from database import save_result, init_db
+from flask_cors import CORS
 import os
 import json
 
 app = Flask(__name__)
+CORS(app)
+
 UPLOAD_FOLDER = "downloads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 

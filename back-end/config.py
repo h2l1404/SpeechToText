@@ -1,7 +1,7 @@
 DATABASE = {
-    "dbname": "karaoke_db",
-    "user": "postgres",
-    "password": "your_password",
+    "dbname": "JPAUDIO",
+    "user": "ron",
+    "password": "postgres",
     "host": "localhost",
     "port": 5432
 }

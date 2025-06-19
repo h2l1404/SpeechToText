@@ -11,6 +11,7 @@ def download_audio_from_youtube(url, output_dir="downloads"):
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'wav',
         }],
+        'ffmpeg_location': r'C:\ProgramData\chocolatey\bin'  # Thêm dòng này
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
