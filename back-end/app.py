@@ -1,3 +1,4 @@
+import json
 from flask import Flask, request, jsonify
 from download_audio import download_audio_from_youtube
 from transcribe import transcribe_audio_with_whisper
@@ -7,7 +8,6 @@ from translate import translate_ja_to_vi
 from database import save_result, init_db
 from flask_cors import CORS
 import os
-import json
 
 app = Flask(__name__)
 CORS(app)
